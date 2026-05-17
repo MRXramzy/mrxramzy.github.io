@@ -17,7 +17,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
-        /* Make sure the background theme spans the entire screen height */
+        /* Spans background theme across entire viewport */
         html, body { min-height: 100vh; background-color: var(--bg-color); }
         body { color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
@@ -30,7 +30,7 @@
         h1 { font-weight: 800; font-size: 28px; background: var(--ig-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
         header p { color: var(--secondary-text); font-size: 14px; font-weight: 400; }
         
-        .container { width: 100%; max-width: 600px; width: 100%; }
+        .container { width: 100%; max-width: 600px; }
         
         /* Instagram Style Form Card */
         .form-card { background: var(--card-bg); padding: 24px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border-color); }
@@ -44,7 +44,7 @@
         .submit-btn:hover { background: var(--ig-blue-hover); }
         .submit-btn:active { opacity: 0.85; }
         
-        /* Instagram Style Navigation Tabs */
+        /* Instagram Style Navigation Tabs (Syntax Error Fixed) */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; width: 100%; overflow-x: auto; padding-bottom: 5px; border-bottom: 1px solid var(--border-color); }
         .tab-btn { background: none; border: none; padding: 12px 4px; font-weight: 600; font-size: 14px; color: var(--secondary-text); cursor: pointer; white-space: nowrap; transition: 0.2s; position: relative; margin-right: 16px; }
         .tab-btn.active { color: var(--primary-text); }
@@ -63,4 +63,209 @@
         .link-card:hover { background: #fdfdfd; }
         
         .link-info h3 { font-size: 15px; font-weight: 600; color: var(--primary-text); margin-bottom: 6px; padding-right: 20px; }
-        .link-info p { font-size: 12px; color: var(--
+        .link-info p { font-size: 12px; color: var(--secondary-text); display: flex; gap: 8px; align-items: center; font-weight: 500; }
+        
+        /* Modern Minimal Badges */
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        .badge.high { border-color: #fd5949; color: #fd5949; }
+        .badge.medium { border-color: #d6249f; color: #d6249f; }
+        .badge.low { border-color: var(--border-color); color: var(--secondary-text); }
+        
+        .card-right { display: flex; align-items: center; gap: 16px; }
+        .delete-btn { background: none; border: none; color: #ed4956; font-size: 16px; cursor: pointer; padding: 6px; transition: opacity 0.2s; }
+        .delete-btn:hover { opacity: 0.7; }
+        .open-icon { color: var(--ig-blue); font-weight: bold; font-size: 16px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="https://mrxramzy.github.io" class="home-link">🏠 Home</a>
+    </div>
+
+    <header>
+        <h1>RRR Mall</h1>
+        <p>Quick access to tracked items</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="form-card">
+            <h2>Add New Shopping Item</h2>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label>Name of the item</label>
+                    <input type="text" id="itemName" placeholder="e.g., Cream Linen Shirt" required>
+                </div>
+                <div class="form-group">
+                    <label>Shopping link</label>
+                    <input type="url" id="itemLink" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Which action/category should we add it under?</label>
+                    <select id="itemCategory">
+                        <option value="cat1" id="opt1">By Function</option>
+                        <option value="cat2" id="opt2">By Event</option>
+                        <option value="cat3" id="opt3">By Action</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="itemPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Add to List</button>
+            </form>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+            <div style="font-weight: 700; font-size: 14px; color: var(--primary-text); text-transform: uppercase; letter-spacing: 0.5px;">My Collections</div>
+            <button class="toggle-rename" onclick="toggleRenameSection()">⚙️ Rename Categories</button>
+        </div>
+
+        <div class="rename-section" id="renameSection">
+            <span style="font-size: 12px; font-weight: 700; color: var(--primary-text);">Customize Tab Names:</span>
+            <div class="rename-grid">
+                <input type="text" id="ren1" placeholder="Rename Function" oninput="updateCategoryNames()">
+                <input type="text" id="ren2" placeholder="Rename Event" oninput="updateCategoryNames()">
+                <input type="text" id="ren3" placeholder="Rename Action" oninput="updateCategoryNames()">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="btn1" onclick="switchTab('cat1')">By Function</button>
+            <button class="tab-btn" id="btn2" onclick="switchTab('cat2')">By Event</button>
+            <button class="tab-btn" id="btn3" onclick="switchTab('cat3')">By Action</button>
+        </div>
+
+        <div id="cat1" class="category-section active"></div>
+        <div id="cat2" class="category-section"></div>
+        <div id="cat3" class="category-section"></div>
+
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
+
+        function init() {
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+            document.getElementById('opt1').innerText = categories.cat1;
+            document.getElementById('opt2').innerText = categories.cat2;
+            document.getElementById('opt3').innerText = categories.cat3;
+            
+            document.getElementById('ren1').value = categories.cat1;
+            document.getElementById('ren2').value = categories.cat2;
+            document.getElementById('ren3').value = categories.cat3;
+
+            renderItems();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        function toggleRenameSection() {
+            const sec = document.getElementById('renameSection');
+            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updateCategoryNames() {
+            categories.cat1 = document.getElementById('ren1').value || "By Function";
+            categories.cat2 = document.getElementById('ren2').value || "By Event";
+            categories.cat3 = document.getElementById('ren3').value || "By Action";
+            
+            localStorage.setItem('shop_categories', JSON.stringify(categories));
+            
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+            document.getElementById('opt1').innerText = categories.cat1;
+            document.getElementById('opt2').innerText = categories.cat2;
+            document.getElementById('opt3').innerText = categories.cat3;
+        }
+
+        function renderItems() {
+            document.getElementById('cat1').innerHTML = '';
+            document.getElementById('cat2').innerHTML = '';
+            document.getElementById('cat3').innerHTML = '';
+
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            shoppingItems.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            shoppingItems.forEach(item => {
+                const targetSection = document.getElementById(item.category);
+                if (!targetSection) return;
+
+                let domain = "";
+                try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e) { domain = "link"; }
+
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.innerHTML = `
+                    <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1; display:flex; justify-content:space-between; align-items:center;">
+                        <div class="link-info">
+                            <h3>${item.name}</h3>
+                            <p>${domain} <span class="badge ${item.priority}">${item.priority}</span></p>
+                        </div>
+                        <div class="card-right">
+                            <div class="open-icon">→</div>
+                        </div>
+                    </a>
+                    <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
+                `;
+                targetSection.appendChild(card);
+            });
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                link: document.getElementById('itemLink').value,
+                category: document.getElementById('itemCategory').value,
+                priority: document.getElementById('itemPriority').value
+            };
+
+            shoppingItems.push(newItem);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            
+            renderItems();
+            
+            document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(newItem.category).classList.add('active');
+            
+            if(newItem.category === 'cat1') document.getElementById('btn1').classList.add('active');
+            if(newItem.category === 'cat2') document.getElementById('btn2').classList.add('active');
+            if(newItem.category === 'cat3') document.getElementById('btn3').classList.add('active');
+
+            document.getElementById('itemForm').reset();
+        });
+
+        function deleteItem(id) {
+            if(confirm("Delete this item?")) {
+                shoppingItems = shoppingItems.filter(item => item.id !== id);
+                localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                renderItems();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
