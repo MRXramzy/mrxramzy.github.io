@@ -46,7 +46,7 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card"><h3>Total Tracked</h3><p id="totalCount">0 Items</p></div>
-            <div class="stat-card"><h3>Estimated Value</h3><p id="totalBudget">₹0</p></div>
+            <div class="stat-card"><h3>Active Budget</h3><p id="totalBudget">₹0</p></div>
         </div>
         <div class="action-bar">
             <a href="collections.html" class="action-btn btn-primary">🛍️ View Lists</a>
@@ -59,12 +59,17 @@
         function loadDashboard() {
             const items = JSON.parse(localStorage.getItem('shop_items')) || [];
             const categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
-            document.getElementById('totalCount').innerText = `${items.length} ${items.length === 1 ? 'Item' : 'Items'}`;
-            const totalValue = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+            
+            const activeItems = items.filter(i => !i.purchased);
+            document.getElementById('totalCount').innerText = `${activeItems.length} ${activeItems.length === 1 ? 'Item' : 'Items'}`;
+            
+            const totalValue = activeItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
             document.getElementById('totalBudget').innerText = `₹${totalValue.toLocaleString('en-IN')}`;
+            
             const urgentFeed = document.getElementById('urgentFeed');
             urgentFeed.innerHTML = '';
-            const highPriorityItems = items.filter(item => item.priority === 'high');
+            const highPriorityItems = activeItems.filter(item => item.priority === 'high');
+            
             if (highPriorityItems.length === 0) {
                 urgentFeed.innerHTML = `<div class="no-items">All clear! No urgent items tracked right now.</div>`;
             } else {
