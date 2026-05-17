@@ -11,25 +11,50 @@
             --primary: #2d3748;
             --accent: #3182ce;
             --text: #4a5568;
+            --success: #38a169;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        header { margin: 20px 0 30px 0; text-align: center; }
+        header { margin: 20px 0 20px 0; text-align: center; }
         h1 { color: var(--primary); margin-bottom: 8px; font-size: 24px; }
         
+        .container { width: 100%; max-width: 600px; }
+        
+        /* Form Styling */
+        .form-card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .form-card h2 { font-size: 18px; margin-bottom: 15px; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #718096; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+        .submit-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .submit-btn:active { transform: scale(0.98); }
+        
         /* Tab Styling */
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; width: 100%; max-width: 600px; overflow-x: auto; padding-bottom: 5px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { background: #e2e8f0; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; color: var(--text); cursor: pointer; white-space: nowrap; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
         .tab-btn.active { background: var(--accent); color: white; }
         
+        /* Rename Categories Section */
+        .rename-section { background: #edf2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: none; }
+        .rename-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .rename-grid input { padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 12px; }
+        .toggle-rename { font-size: 12px; color: var(--accent); cursor: pointer; background: none; border: none; font-weight: 600; }
+
         /* Grid and Cards */
-        .container { width: 100%; max-width: 600px; }
         .category-section { display: none; }
         .category-section.active { display: block; animation: fadeIn 0.3s ease; }
-        .link-card { background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-decoration: none; color: inherit; transition: transform 0.2s; }
+        .link-card { background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-decoration: none; color: inherit; transition: transform 0.2s; position: relative; }
         .link-card:active { transform: scale(0.98); }
-        .link-info h3 { font-size: 16px; color: var(--primary); margin-bottom: 4px; }
-        .link-info p { font-size: 13px; color: #a0aec0; }
+        .link-info h3 { font-size: 16px; color: var(--primary); margin-bottom: 4px; padding-right: 45px; }
+        .link-info p { font-size: 13px; color: #a0aec0; display: flex; gap: 8px; align-items: center; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge.high { background: #fed7d7; color: #9b2c2c; }
+        .badge.medium { background: #feebc8; color: #9c4221; }
+        .badge.low { background: #e2e8f0; color: #4a5568; }
+        
+        .card-right { display: flex; align-items: center; gap: 15px; }
+        .delete-btn { background: none; border: none; color: #e53e3e; font-size: 18px; cursor: pointer; padding: 5px; z-index: 10; }
         .open-icon { color: var(--accent); font-weight: bold; font-size: 18px; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -42,69 +67,179 @@
         <p>Quick access to tracked items</p>
     </header>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('function')">By Function</button>
-        <button class="tab-btn" onclick="switchTab('event')">By Event</button>
-        <button class="tab-btn" onclick="switchTab('action')">By Action</button>
-    </div>
-
     <div class="container">
         
-        <div id="function" class="category-section active">
-            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Electronics & Clothes</div>
-            
-            <a href="https://frenchcrown.in/products/serenity-porcelain-cream-solid-luxuries-linen-dress-shirt-j" target="_blank" class="link-card">
-                <div class="link-info">
-                    <h3>French Crown Cream Linen Shirt</h3>
-                    <p>frenchcrown.in</p>
+        <div class="form-card">
+            <h2>Add New Shopping Item</h2>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label>Name of the item</label>
+                    <input type="text" id="itemName" placeholder="e.g., Cream Linen Shirt" required>
                 </div>
-                <div class="open-icon">→</div>
-            </a>
-            
+                <div class="form-group">
+                    <label>Shopping link</label>
+                    <input type="url" id="itemLink" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Which action/category should we add it under?</label>
+                    <select id="itemCategory">
+                        <option value="cat1" id="opt1">By Function</option>
+                        <option value="cat2" id="opt2">By Event</option>
+                        <option value="cat3" id="opt3">By Action</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="itemPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">⚡ Add to List</button>
+            </form>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-weight: bold; font-size: 14px; color: #718096;">My Lists</div>
+            <button class="toggle-rename" onclick="toggleRenameSection()">⚙️ Rename Categories</button>
+        </div>
+
+        <div class="rename-section" id="renameSection">
+            <span style="font-size: 12px; font-weight: bold;">Customize Tab Names:</span>
+            <div class="rename-grid">
+                <input type="text" id="ren1" placeholder="Rename Function" oninput="updateCategoryNames()">
+                <input type="text" id="ren2" placeholder="Rename Event" oninput="updateCategoryNames()">
+                <input type="text" id="ren3" placeholder="Rename Action" oninput="updateCategoryNames()">
             </div>
-
-        <div id="event" class="category-section">
-            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Upcoming Occasions</div>
-            
-            <a href="#" target="_blank" class="link-card">
-                <div class="link-info">
-                    <h3>Example: Camping Tent (Summer Trip)</h3>
-                    <p>amazon.com</p>
-                </div>
-                <div class="open-icon">→</div>
-            </a>
         </div>
 
-        <div id="action" class="category-section">
-            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Priority Actions</div>
-            
-            <a href="#" target="_blank" class="link-card">
-                <div class="link-info">
-                    <h3>Example: Gym Shoes (Buy Immediately)</h3>
-                    <p>nike.com</p>
-                </div>
-                <div class="open-icon">→</div>
-            </a>
+        <div class="tabs">
+            <button class="tab-btn active" id="btn1" onclick="switchTab('cat1')">By Function</button>
+            <button class="tab-btn" id="btn2" onclick="switchTab('cat2')">By Event</button>
+            <button class="tab-btn" id="btn3" onclick="switchTab('cat3')">By Action</button>
         </div>
+
+        <div id="cat1" class="category-section active"></div>
+        <div id="cat2" class="category-section"></div>
+        <div id="cat3" class="category-section"></div>
 
     </div>
 
     <script>
+        // Load layout names and items from localStorage
+        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [
+            { id: 1, name: "French Crown Cream Linen Shirt", link: "https://frenchcrown.in/products/serenity-porcelain-cream-solid-luxuries-linen-dress-shirt-j", category: "cat1", priority: "high" }
+        ];
+
+        function init() {
+            // Apply category names
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+            document.getElementById('opt1').innerText = categories.cat1;
+            document.getElementById('opt2').innerText = categories.cat2;
+            document.getElementById('opt3').innerText = categories.cat3;
+            
+            document.getElementById('ren1').value = categories.cat1;
+            document.getElementById('ren2').value = categories.cat2;
+            document.getElementById('ren3').value = categories.cat3;
+
+            renderItems();
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
         }
 
-        <a href="PASTE_YOUR_SHOPPING_LINK_HERE" target="_blank" class="link-card">
-    <div class="link-info">
-        <h3>ITEM_NAME_HERE (e.g., Linen Shirt)</h3>
-        <p>WEBSITE_NAME_HERE (e.g., amazon.in)</p>
-    </div>
-    <div class="open-icon">→</div>
-</a>
+        function toggleRenameSection() {
+            const sec = document.getElementById('renameSection');
+            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updateCategoryNames() {
+            categories.cat1 = document.getElementById('ren1').value || "By Function";
+            categories.cat2 = document.getElementById('ren2').value || "By Event";
+            categories.cat3 = document.getElementById('ren3').value || "By Action";
+            
+            localStorage.setItem('shop_categories', JSON.stringify(categories));
+            
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+            document.getElementById('opt1').innerText = categories.cat1;
+            document.getElementById('opt2').innerText = categories.cat2;
+            document.getElementById('opt3').innerText = categories.cat3;
+        }
+
+        function renderItems() {
+            document.getElementById('cat1').innerHTML = '';
+            document.getElementById('cat2').innerHTML = '';
+            document.getElementById('cat3').innerHTML = '';
+
+            // Sort high priority to top
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            shoppingItems.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            shoppingItems.forEach(item => {
+                const targetSection = document.getElementById(item.category);
+                if (!targetSection) return;
+
+                let domain = "";
+                try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e) { domain = "link"; }
+
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.innerHTML = `
+                    <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1; display:flex; justify-content:space-between; align-items:center;">
+                        <div class="link-info">
+                            <h3>${item.name}</h3>
+                            <p>${domain} <span class="badge ${item.priority}">${item.priority}</span></p>
+                        </div>
+                        <div class="card-right">
+                            <div class="open-icon">→</div>
+                        </div>
+                    </a>
+                    <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
+                `;
+                targetSection.appendChild(card);
+            });
+        }
+
+        // Form submission handling
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                link: document.getElementById('itemLink').value,
+                category: document.getElementById('itemCategory').value,
+                priority: document.getElementById('itemPriority').value
+            };
+
+            shoppingItems.push(newItem);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            
+            renderItems();
+            switchTab(newItem.category);
+            document.getElementById('itemForm').reset();
+        });
+
+        function deleteItem(id) {
+            event.stopPropagation();
+            if(confirm("Delete this item?")) {
+                shoppingItems = shoppingItems.filter(item => item.id !== id);
+                localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                renderItems();
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
