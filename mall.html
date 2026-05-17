@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RRR Mall - Collections</title>
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --primary-text: #262626;
+            --secondary-text: #737373;
+            --ig-blue: #0095F6;
+            --ig-blue-hover: #1877F2;
+            --border-color: #dbdbdb;
+            --ig-gradient: linear-gradient(45deg, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        html, body { min-height: 100vh; background-color: var(--bg-color); }
+        body { color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .top-nav { width: 100%; max-width: 600px; display: flex; justify-content: flex-start; margin-bottom: 15px; }
+        .home-link { display: flex; align-items: center; gap: 6px; text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); }
+
+        header { margin: 10px 0 25px 0; text-align: center; }
+        h1 { font-weight: 800; font-size: 28px; background: var(--ig-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .container { width: 100%; max-width: 600px; }
+        
+        .form-card { background: var(--card-bg); padding: 24px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border-color); }
+        .form-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 18px; text-transform: uppercase; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--secondary-text); }
+        .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; background: #fafafa; outline: none; }
+        
+        .submit-btn { width: 100%; background: var(--ig-blue); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; width: 100%; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
+        .tab-btn { background: none; border: none; padding: 12px 4px; font-weight: 600; font-size: 14px; color: var(--secondary-text); cursor: pointer; margin-right: 16px; position: relative; }
+        .tab-btn.active { color: var(--primary-text); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary-text); }
+        
+        .rename-section { background: #f4f4f4; padding: 16px; border-radius: 8px; margin-bottom: 20px; display: none; border: 1px solid var(--border-color); }
+        .rename-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .rename-grid input { padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; }
+        .toggle-rename { font-size: 13px; color: var(--ig-blue); cursor: pointer; background: none; border: none; font-weight: 600; }
+
+        .category-section { display: none; }
+        .category-section.active { display: block; }
+        .link-card { background: var(--card-bg); padding: 16px; border-radius: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); text-decoration: none; color: inherit; }
+        
+        .link-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+        .link-info p { font-size: 12px; color: var(--secondary-text); display: flex; gap: 8px; align-items: center; }
+        
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        .badge.high { border-color: #fd5949; color: #fd5949; }
+        .badge.medium { border-color: #d6249f; color: #d6249f; }
+        .badge.low { border-color: var(--border-color); color: var(--secondary-text); }
+        .price-tag { font-weight: 700; color: #38a169; margin-left: 5px; }
+        
+        .card-right { display: flex; align-items: center; gap: 16px; }
+        .delete-btn { background: none; border: none; color: #ed4956; font-size: 16px; cursor: pointer; }
+        .open-icon { color: var(--ig-blue); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="index.html" class="home-link">🏠 Home Dashboard</a>
+    </div>
+
+    <header>
+        <h1>RRR Mall</h1>
+        <p>Manage Your Collections</p>
+    </header>
+
+    <div class="container">
+        <div class="form-card">
+            <h2>Add New Shopping Item</h2>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label>Name of the item</label>
+                    <input type="text" id="itemName" placeholder="e.g., Cream Linen Shirt" required>
+                </div>
+                <div class="form-group">
+                    <label>Shopping link</label>
+                    <input type="url" id="itemLink" placeholder="https://..." required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>List Category</label>
+                        <select id="itemCategory">
+                            <option value="cat1" id="opt1">By Function</option>
+                            <option value="cat2" id="opt2">By Event</option>
+                            <option value="cat3" id="opt3">By Action</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Est Price (Optional)</label>
+                        <input type="number" id="itemPrice" placeholder="e.g., 2256">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="itemPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Add to List</button>
+            </form>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+            <div style="font-weight: 700; font-size: 14px; text-transform: uppercase;">My Collections</div>
+            <button class="toggle-rename" onclick="toggleRenameSection()">⚙️ Rename Categories</button>
+        </div>
+
+        <div class="rename-section" id="renameSection">
+            <div class="rename-grid">
+                <input type="text" id="ren1" oninput="updateCategoryNames()">
+                <input type="text" id="ren2" oninput="updateCategoryNames()">
+                <input type="text" id="ren3" oninput="updateCategoryNames()">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="btn1" onclick="switchTab('cat1')"></button>
+            <button class="tab-btn" id="btn2" onclick="switchTab('cat2')"></button>
+            <button class="tab-btn" id="btn3" onclick="switchTab('cat3')"></button>
+        </div>
+
+        <div id="cat1" class="category-section active"></div>
+        <div id="cat2" class="category-section"></div>
+        <div id="cat3" class="category-section"></div>
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
+
+        function init() {
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+            document.getElementById('opt1').innerText = categories.cat1;
+            document.getElementById('opt2').innerText = categories.cat2;
+            document.getElementById('opt3').innerText = categories.cat3;
+            document.getElementById('ren1').value = categories.cat1;
+            document.getElementById('ren2').value = categories.cat2;
+            document.getElementById('ren3').value = categories.cat3;
+            renderItems();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(event && event.currentTarget) event.currentTarget.classList.add('active');
+        }
+
+        function toggleRenameSection() {
+            const sec = document.getElementById('renameSection');
+            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function updateCategoryNames() {
+            categories.cat1 = document.getElementById('ren1').value || "By Function";
+            categories.cat2 = document.getElementById('ren2').value || "By Event";
+            categories.cat3 = document.getElementById('ren3').value || "By Action";
+            localStorage.setItem('shop_categories', JSON.stringify(categories));
+            init();
+        }
+
+        function renderItems() {
+            document.getElementById('cat1').innerHTML = '';
+            document.getElementById('cat2').innerHTML = '';
+            document.getElementById('cat3').innerHTML = '';
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            shoppingItems.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            shoppingItems.forEach(item => {
+                const targetSection = document.getElementById(item.category);
+                if (!targetSection) return;
+                let domain = "";
+                try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e) { domain = "link"; }
+
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.innerHTML = `
+                    <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1; display:flex; justify-content:space-between; align-items:center;">
+                        <div class="link-info">
+                            <h3>${item.name}</h3>
+                            <p>${domain} <span class="badge ${item.priority}">${item.priority}</span> ${item.price ? `<span class="price-tag">₹${item.price}</span>` : ''}</p>
+                        </div>
+                        <div class="card-right"><div class="open-icon">→</div></div>
+                    </a>
+                    <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
+                `;
+                targetSection.appendChild(card);
+            });
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                link: document.getElementById('itemLink').value,
+                category: document.getElementById('itemCategory').value,
+                price: document.getElementById('itemPrice').value,
+                priority: document.getElementById('itemPriority').value
+            };
+            shoppingItems.push(newItem);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            renderItems();
+            switchTab(newItem.category);
+            document.getElementById('itemForm').reset();
+        });
+
+        function deleteItem(id) {
+            if(confirm("Delete this item?")) {
+                shoppingItems = shoppingItems.filter(item => item.id !== id);
+                localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                renderItems();
+            }
+        }
+        init();
+    </script>
+</body>
+</html>
