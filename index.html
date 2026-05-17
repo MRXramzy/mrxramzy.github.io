@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shopping Link Hub</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary: #2d3748;
+            --accent: #3182ce;
+            --text: #4a5568;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        header { margin: 20px 0 30px 0; text-align: center; }
+        h1 { color: var(--primary); margin-bottom: 8px; font-size: 24px; }
+        
+        /* Tab Styling */
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; width: 100%; max-width: 600px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { background: #e2e8f0; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; color: var(--text); cursor: pointer; white-space: nowrap; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        .tab-btn.active { background: var(--accent); color: white; }
+        
+        /* Grid and Cards */
+        .container { width: 100%; max-width: 600px; }
+        .category-section { display: none; }
+        .category-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .link-card { background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-decoration: none; color: inherit; transition: transform 0.2s; }
+        .link-card:active { transform: scale(0.98); }
+        .link-info h3 { font-size: 16px; color: var(--primary); margin-bottom: 4px; }
+        .link-info p { font-size: 13px; color: #a0aec0; }
+        .open-icon { color: var(--accent); font-weight: bold; font-size: 18px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🛒 My Shopping Hub</h1>
+        <p>Quick access to tracked items</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('function')">By Function</button>
+        <button class="tab-btn" onclick="switchTab('event')">By Event</button>
+        <button class="tab-btn" onclick="switchTab('action')">By Action</button>
+    </div>
+
+    <div class="container">
+        
+        <div id="function" class="category-section active">
+            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Electronics & Clothes</div>
+            
+            <a href="https://frenchcrown.in/products/serenity-porcelain-cream-solid-luxuries-linen-dress-shirt-j" target="_blank" class="link-card">
+                <div class="link-info">
+                    <h3>French Crown Cream Linen Shirt</h3>
+                    <p>frenchcrown.in</p>
+                </div>
+                <div class="open-icon">→</div>
+            </a>
+            
+            </div>
+
+        <div id="event" class="category-section">
+            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Upcoming Occasions</div>
+            
+            <a href="#" target="_blank" class="link-card">
+                <div class="link-info">
+                    <h3>Example: Camping Tent (Summer Trip)</h3>
+                    <p>amazon.com</p>
+                </div>
+                <div class="open-icon">→</div>
+            </a>
+        </div>
+
+        <div id="action" class="category-section">
+            <div style="margin-bottom: 10px; font-weight: bold; color: #718096;">Priority Actions</div>
+            
+            <a href="#" target="_blank" class="link-card">
+                <div class="link-info">
+                    <h3>Example: Gym Shoes (Buy Immediately)</h3>
+                    <p>nike.com</p>
+                </div>
+                <div class="open-icon">→</div>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
