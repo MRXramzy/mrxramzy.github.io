@@ -3,85 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RRR Mall - Home Dashboard</title>
+    <title>RRR Mall - Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fafafa;
-            --card-bg: #ffffff;
-            --primary-text: #262626;
-            --secondary-text: #737373;
-            --ig-blue: #0095F6;
-            --border-color: #dbdbdb;
-            --ig-gradient: linear-gradient(45deg, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            --bg-color: #0F1115;
+            --card-bg: rgba(30, 35, 45, 0.65);
+            --card-hover: rgba(30, 35, 45, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: linear-gradient(135deg, #7C5CFF, #22C55E);
+            --primary-text: #F5F7FA;
+            --secondary-text: #9CA3AF;
+            --accent-purple: #7C5CFF;
+            --accent-green: #22C55E;
+            --accent-pink: #D6249F;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        html, body { min-height: 100vh; background-color: var(--bg-color); color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        header { margin: 20px 0 30px 0; text-align: center; position: relative; width: 100%; max-width: 600px; }
-        h1 { font-weight: 800; font-size: 34px; background: var(--ig-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        header p { color: var(--secondary-text); font-size: 14px; margin-top: 5px; }
-        .settings-icon { position: absolute; right: 5px; top: 5px; text-decoration: none; font-size: 20px; }
-        .container { width: 100%; max-width: 600px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; text-align: center; }
-        .stat-card h3 { font-size: 12px; text-transform: uppercase; color: var(--secondary-text); letter-spacing: 0.5px; margin-bottom: 6px; }
-        .stat-card p { font-size: 22px; font-weight: 800; }
-        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .action-btn { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px; border-radius: 12px; font-weight: 700; text-decoration: none; border: 1px solid var(--border-color); font-size: 15px; text-align: center; }
-        .btn-primary { background: var(--ig-blue); color: white; border: none; box-shadow: 0 4px 12px rgba(0,149,246,0.15); }
-        .btn-secondary { background: var(--card-bg); color: var(--primary-text); }
-        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
-        .feed-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; margin-bottom: 8px; }
-        .feed-card h4 { font-size: 14px; font-weight: 600; }
-        .feed-card p { font-size: 11px; color: #fd5949; font-weight: 700; text-transform: uppercase; margin-top: 2px;}
-        .feed-tag { font-size: 11px; background: #f4f4f4; padding: 2px 6px; border-radius: 4px; color: var(--secondary-text); font-weight: 600; }
-        .no-items { background: var(--card-bg); border: 1px dashed var(--border-color); padding: 20px; text-align: center; border-radius: 8px; color: var(--secondary-text); font-size: 14px; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .stat-value, .btn-text { font-family: 'Space Grotesk', sans-serif; }
+        
+        body { 
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(124, 92, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.12) 0%, transparent 40%),
+                linear-gradient(rgba(15, 17, 21, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 17, 21, 0.4) 1px, transparent 1px),
+                #0F1115;
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--primary-text);
+            min-height: 100vh;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Sticky Translucent Blur Navbar */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
+            background: rgba(15, 17, 21, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: center; padding: 15px 20px;
+        }
+        .nav-container { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; background: linear-gradient(45deg, #7C5CFF, #FF5E97); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-actions { display: flex; gap: 12px; }
+        .nav-btn { text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: 0.2s; }
+        .nav-btn:hover { border-color: var(--accent-purple); background: rgba(124, 92, 255, 0.1); }
+
+        /* Bento Architecture */
+        .bento-grid {
+            width: 100%; max-width: 1100px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; padding: 20px;
+        }
+        
+        .bento-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 24px;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s, box-shadow 0.3s;
+        }
+        .bento-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            background: var(--card-hover);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            border-color: rgba(124, 92, 255, 0.4);
+        }
+
+        /* Span Variants for High-Density Design */
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+
+        /* Component Elements */
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--secondary-text); font-weight: 700; }
+        
+        /* Stats Blocks */
+        .stat-value { font-size: 38px; font-weight: 700; margin-top: 10px; color: var(--primary-text); }
+        .stat-value.green { background: linear-gradient(45deg, #22C55E, #a7f3d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Interactive Entry System */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: span 2; }
+        .form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--secondary-text); }
+        .form-group input, .form-group select { 
+            background: rgba(10, 12, 16, 0.6); border: 1px solid var(--border-color); 
+            padding: 12px; border-radius: 12px; color: var(--primary-text); font-size: 14px; outline: none; transition: 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-purple); background: rgba(10, 12, 16, 0.9); }
+        .submit-gradient {
+            width: 100%; grid-column: span 2; margin-top: 8px;
+            background: linear-gradient(90deg, #7C5CFF, #FF5E97); color: white;
+            border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 14px;
+            cursor: pointer; transition: opacity 0.2s;
+        }
+        .submit-gradient:hover { opacity: 0.9; }
+
+        /* Watchlist Feed Layout */
+        .feed-container { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 4px; }
+        .feed-item {
+            background: rgba(10, 12, 16, 0.4); border: 1px solid var(--border-color);
+            padding: 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;
+            text-decoration: none; color: inherit; transition: 0.2s;
+        }
+        .feed-item:hover { border-color: rgba(255, 94, 151, 0.4); background: rgba(10,12,16,0.7); }
+        .feed-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .feed-item p { font-size: 11px; color: #FF5E97; font-weight: 700; text-transform: uppercase; }
+        .feed-pill { font-size: 11px; padding: 4px 10px; background: rgba(124, 92, 255, 0.15); border: 1px solid rgba(124, 92, 255, 0.3); border-radius: 20px; color: #a78bfa; font-weight: 600; }
+        .empty-alert { text-align: center; color: var(--secondary-text); padding: 40px 0; font-size: 13px; border: 1px dashed var(--border-color); border-radius: 14px; }
+
+        /* Settings Sub-Module */
+        .settings-row { display: flex; flex-direction: column; gap: 12px; }
+        .config-input { display: flex; align-items: center; gap: 10px; background: rgba(10,12,16,0.4); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .config-input label { font-size: 12px; font-weight: 700; color: var(--accent-purple); min-width: 50px; }
+        .config-input input { background: transparent; border: none; outline: none; color: white; font-size: 14px; width: 100%; }
+        .danger-action { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 13px; width: 100%; transition: 0.2s; }
+        .danger-action:hover { background: rgba(239, 68, 68, 0.2); }
+
+        /* Custom Scrollbar for Dense Feeds */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Responsive Architecture Engine */
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .span-2 { grid-column: span 2; }
+        }
+        @media (max-width: 600px) {
+            body { padding-top: 70px; }
+            .bento-grid { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+            .span-2, .span-3 { grid-column: span 1; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.custom-span { grid-column: span 1; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>RRR Mall</h1>
-        <p>Your Personal Shopping Command Center</p>
-        <a href="settings.html" class="settings-icon">⚙️</a>
-    </header>
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card"><h3>Total Tracked</h3><p id="totalCount">0 Items</p></div>
-            <div class="stat-card"><h3>Active Budget</h3><p id="totalBudget">₹0</p></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">RRR MALL</div>
+            <div class="nav-actions">
+                <a href="collections.html" class="nav-btn">🛍️ View My Canvas</a>
+            </div>
         </div>
-        <div class="action-bar">
-            <a href="collections.html" class="action-btn btn-primary">🛍️ View Lists</a>
-            <a href="add-item.html" class="action-btn btn-secondary">➕ Add Item</a>
+    </nav>
+
+    <div class="bento-grid">
+        
+        <div class="bento-card">
+            <div class="card-header"><span class="card-title">Total Active Assets</span></div>
+            <div class="stat-value" id="totalCount">0 Items</div>
         </div>
-        <div class="section-title">🚨 High Priority Watchlist</div>
-        <div class="priority-feed" id="urgentFeed"></div>
+
+        <div class="bento-card">
+            <div class="card-header"><span class="card-title">Gross List Value</span></div>
+            <div class="stat-value green" id="totalBudget">₹0</div>
+        </div>
+
+        <div class="bento-card">
+            <div class="card-header"><span class="card-title">Quick Settings</span></div>
+            <div class="settings-row">
+                <button class="danger-action" onclick="wipeDatabase()">Wipe Core Database</button>
+            </div>
+        </div>
+
+        <div class="bento-card span-2">
+            <div class="card-header"><span class="card-title">➕ Inject New Shopping Target</span></div>
+            <form id="bentoForm">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Target Name</label>
+                        <input type="text" id="itemName" placeholder="e.g., Silk Blend Trousers" required>
+                    </div>
+                    <div class="form-group full">
+                        <label>Product Destination Link</label>
+                        <input type="url" id="itemLink" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Collection Destination</label>
+                        <select id="itemCategory"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price Value (₹)</label>
+                        <input type="text" id="itemPrice" placeholder="Leave blank to try tracking">
+                    </div>
+                    <div class="form-group full">
+                        <label>Urgency Index</label>
+                        <select id="itemPriority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">🔥 High Priority Alert</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="submitBtn" class="submit-gradient">Deploy Asset to Canvas</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bento-card">
+            <div class="card-header"><span class="card-title">⚙️ Rename Collections</span></div>
+            <div class="settings-row" style="margin-top: 10px;">
+                <div class="config-input"><label>List 1</label><input type="text" id="set1" oninput="saveCats()"></div>
+                <div class="config-input"><label>List 2</label><input type="text" id="set2" oninput="saveCats()"></div>
+                <div class="config-input"><label>List 3</label><input type="text" id="set3" oninput="saveCats()"></div>
+            </div>
+        </div>
+
+        <div class="bento-card span-3">
+            <div class="card-header"><span class="card-title">🚨 High Priority Watchlist Radar</span></div>
+            <div class="feed-container" id="urgentFeed">
+                </div>
+        </div>
+
     </div>
+
     <script>
-        function loadDashboard() {
-            const items = JSON.parse(localStorage.getItem('shop_items')) || [];
-            const categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
-            
+        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        let items = JSON.parse(localStorage.getItem('shop_items')) || [];
+
+        function initDashboard() {
+            // Map configuration inputs
+            document.getElementById('set1').value = categories.cat1;
+            document.getElementById('set2').value = categories.cat2;
+            document.getElementById('set3').value = categories.cat3;
+
+            // Generate category selector elements
+            const selectDropdown = document.getElementById('itemCategory');
+            selectDropdown.innerHTML = '';
+            Object.keys(categories).forEach(key => {
+                let opt = document.createElement('option');
+                opt.value = key; opt.innerText = categories[key];
+                selectDropdown.appendChild(opt);
+            });
+
+            renderDashboardMetrics();
+        }
+
+        function saveCats() {
+            categories.cat1 = document.getElementById('set1').value || "By Function";
+            categories.cat2 = document.getElementById('set2').value || "By Event";
+            categories.cat3 = document.getElementById('set3').value || "By Action";
+            localStorage.setItem('shop_categories', JSON.stringify(categories));
+            initDashboard();
+        }
+
+        function renderDashboardMetrics() {
             const activeItems = items.filter(i => !i.purchased);
-            document.getElementById('totalCount').innerText = `${activeItems.length} ${activeItems.length === 1 ? 'Item' : 'Items'}`;
-            
-            const totalValue = activeItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+            document.getElementById('totalCount').innerText = `${activeItems.length} ${activeItems.length === 1 ? 'Asset' : 'Assets'}`;
+
+            const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
             document.getElementById('totalBudget').innerText = `₹${totalValue.toLocaleString('en-IN')}`;
-            
-            const urgentFeed = document.getElementById('urgentFeed');
-            urgentFeed.innerHTML = '';
-            const highPriorityItems = activeItems.filter(item => item.priority === 'high');
-            
-            if (highPriorityItems.length === 0) {
-                urgentFeed.innerHTML = `<div class="no-items">All clear! No urgent items tracked right now.</div>`;
+
+            const feed = document.getElementById('urgentFeed');
+            feed.innerHTML = '';
+            const highItems = activeItems.filter(i => i.priority === 'high');
+
+            if(highItems.length === 0) {
+                feed.innerHTML = `<div class="empty-alert">Radar Clear. No high-priority risks detected.</div>`;
             } else {
-                highPriorityItems.forEach(item => {
+                highItems.forEach(item => {
                     const card = document.createElement('a');
-                    card.href = item.link; card.target = "_blank"; card.className = "feed-card";
-                    card.innerHTML = `<div><h4>${item.name}</h4><p>Urgent Buy</p></div><span class="feed-tag">${categories[item.category] || "Collection"}</span>`;
-                    urgentFeed.appendChild(card);
+                    card.href = item.link; card.target = "_blank"; card.className = "feed-item";
+                    card.innerHTML = `
+                        <div><h4>${item.name}</h4><p>Urgent Intervention Required</p></div>
+                        <span class="feed-pill">${categories[item.category] || "Collection"}</span>
+                    `;
+                    feed.appendChild(card);
                 });
             }
         }
-        loadDashboard();
+
+        document.getElementById('bentoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const linkUrl = document.getElementById('itemLink').value;
+            let rawPrice = document.getElementById('itemPrice').value;
+            let cleanPrice = parseFloat(rawPrice.replace(/[^0-9.]/g, '')) || 0;
+
+            if(!rawPrice) {
+                btn.disabled = true; btn.innerText = "Tracking link nodes...";
+                try {
+                    const res = await fetch(`https://api.microlink.io?url=${encodeURIComponent(linkUrl)}`);
+                    const data = await res.json();
+                    if(data.status === 'success' && data.data.price) {
+                        cleanPrice = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
+                    }
+                } catch(err) {}
+                
+                if(cleanPrice === 0) {
+                    let manual = prompt("Automation blocked by vendor firewall. Input numeric value manually:");
+                    if(manual) cleanPrice = parseFloat(manual.replace(/[^0-9.]/g, '')) || 0;
+                }
+            }
+
+            items.push({
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                link: linkUrl,
+                category: document.getElementById('itemCategory').value,
+                price: cleanPrice,
+                priority: document.getElementById('itemPriority').value,
+                purchased: false
+            });
+
+            localStorage.setItem('shop_items', JSON.stringify(items));
+            document.getElementById('bentoForm').reset();
+            btn.disabled = false; btn.innerText = "Deploy Asset to Canvas";
+            renderDashboardMetrics();
+        });
+
+        function wipeDatabase() {
+            if(confirm("Confirm extreme protocol: Wipe entire active matrix?")) {
+                localStorage.clear(); location.reload();
+            }
+        }
+
+        initDashboard();
     </script>
 </body>
 </html>
