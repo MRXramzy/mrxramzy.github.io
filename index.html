@@ -16,26 +16,20 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { min-height: 100vh; background-color: var(--bg-color); color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        header { margin: 20px 0 30px 0; text-align: center; }
+        header { margin: 20px 0 30px 0; text-align: center; position: relative; width: 100%; max-width: 600px; }
         h1 { font-weight: 800; font-size: 34px; background: var(--ig-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         header p { color: var(--secondary-text); font-size: 14px; margin-top: 5px; }
-        
+        .settings-icon { position: absolute; right: 5px; top: 5px; text-decoration: none; font-size: 20px; }
         .container { width: 100%; max-width: 600px; }
-        
-        /* AnyList / Bring inspired Stat Blocks */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 25px; }
         .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; text-align: center; }
         .stat-card h3 { font-size: 12px; text-transform: uppercase; color: var(--secondary-text); letter-spacing: 0.5px; margin-bottom: 6px; }
-        .stat-card p { font-size: 22px; font-weight: 800; color: var(--primary-text); }
-        
-        /* Launch Button Layout */
-        .launch-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--ig-blue); color: white; text-decoration: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 16px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,149,246,0.15); transition: opacity 0.2s; }
-        .launch-btn:active { opacity: 0.9; }
-
-        /* Priority Grid Alert */
-        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--primary-text); margin-bottom: 12px; padding-left: 4px; display: flex; align-items: center; gap: 6px;}
-        .priority-feed { margin-bottom: 25px; }
+        .stat-card p { font-size: 22px; font-weight: 800; }
+        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .action-btn { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px; border-radius: 12px; font-weight: 700; text-decoration: none; border: 1px solid var(--border-color); font-size: 15px; text-align: center; }
+        .btn-primary { background: var(--ig-blue); color: white; border: none; box-shadow: 0 4px 12px rgba(0,149,246,0.15); }
+        .btn-secondary { background: var(--card-bg); color: var(--primary-text); }
+        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
         .feed-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: inherit; margin-bottom: 8px; }
         .feed-card h4 { font-size: 14px; font-weight: 600; }
         .feed-card p { font-size: 11px; color: #fd5949; font-weight: 700; text-transform: uppercase; margin-top: 2px;}
@@ -44,75 +38,44 @@
     </style>
 </head>
 <body>
-
     <header>
         <h1>RRR Mall</h1>
         <p>Your Personal Shopping Command Center</p>
+        <a href="settings.html" class="settings-icon">⚙️</a>
     </header>
-
     <div class="container">
-        
         <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Tracked</h3>
-                <p id="totalCount">0 Items</p>
-            </div>
-            <div class="stat-card">
-                <h3>Estimated Value</h3>
-                <p id="totalBudget">₹0</p>
-            </div>
+            <div class="stat-card"><h3>Total Tracked</h3><p id="totalCount">0 Items</p></div>
+            <div class="stat-card"><h3>Estimated Value</h3><p id="totalBudget">₹0</p></div>
         </div>
-
-        <a href="mall.html" class="launch-btn">
-            <span>🛍️ Open My Collections</span>
-            <span>→</span>
-        </a>
-
+        <div class="action-bar">
+            <a href="collections.html" class="action-btn btn-primary">🛍️ View Lists</a>
+            <a href="add-item.html" class="action-btn btn-secondary">➕ Add Item</a>
+        </div>
         <div class="section-title">🚨 High Priority Watchlist</div>
-        <div class="priority-feed" id="urgentFeed">
-            </div>
-
+        <div class="priority-feed" id="urgentFeed"></div>
     </div>
-
     <script>
         function loadDashboard() {
             const items = JSON.parse(localStorage.getItem('shop_items')) || [];
             const categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
-            
-            // Calculate Dashboard Stats
             document.getElementById('totalCount').innerText = `${items.length} ${items.length === 1 ? 'Item' : 'Items'}`;
-            
             const totalValue = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
             document.getElementById('totalBudget').innerText = `₹${totalValue.toLocaleString('en-IN')}`;
-            
-            // Build Urgent Watchlist Filter
             const urgentFeed = document.getElementById('urgentFeed');
             urgentFeed.innerHTML = '';
-            
             const highPriorityItems = items.filter(item => item.priority === 'high');
-            
             if (highPriorityItems.length === 0) {
-                urgentFeed.innerHTML = `<div class="no-items">All clear! No urgent high-priority items tracked right now.</div>`;
+                urgentFeed.innerHTML = `<div class="no-items">All clear! No urgent items tracked right now.</div>`;
             } else {
                 highPriorityItems.forEach(item => {
-                    const mappedListName = categories[item.category] || "Collection";
                     const card = document.createElement('a');
-                    card.href = item.link;
-                    card.target = "_blank";
-                    card.className = "feed-card";
-                    card.innerHTML = `
-                        <div>
-                            <h4>${item.name}</h4>
-                            <p>Urgent Buy</p>
-                        </div>
-                        <span class="feed-tag">${mappedListName}</span>
-                    `;
+                    card.href = item.link; card.target = "_blank"; card.className = "feed-card";
+                    card.innerHTML = `<div><h4>${item.name}</h4><p>Urgent Buy</p></div><span class="feed-tag">${categories[item.category] || "Collection"}</span>`;
                     urgentFeed.appendChild(card);
                 });
             }
         }
-        
-        // Initialize Core Dashboard Engine
         loadDashboard();
     </script>
 </body>
