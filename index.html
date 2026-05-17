@@ -144,4 +144,366 @@
         .share-wa-btn { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; cursor: pointer; transition: opacity 0.2s; }
         .share-wa-btn:hover { opacity: 0.9; }
 
-        .canvas-viewport { display: none; margin-top: 10px; min-height: 20
+        .canvas-viewport { display: none; margin-top: 10px; min-height: 200px; max-height: 520px; overflow-y: auto; padding-right: 6px; }
+        .canvas-viewport.active { display: block; animation: panelFade 0.35s ease; }
+
+        /* Glassmorphic Post Style Card Injections */
+        .feed-post-card {
+            background: rgba(15, 18, 24, 0.4); border: 1px solid var(--border-color);
+            padding: 16px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; transition: border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+        .feed-post-card:hover { border-color: rgba(124, 92, 255, 0.3); background: rgba(15,18,24,0.7); transform: translateX(2px); }
+        .feed-post-card.completed-line { opacity: 0.35; background: rgba(10,12,16,0.2); }
+        .feed-post-card.completed-line h4 { text-decoration: line-through; color: var(--text-secondary); }
+
+        .card-segment-left { display: flex; align-items: center; gap: 14px; flex-grow: 1; }
+        .checkbox-node { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-green); }
+        .thumbnail-favicon { width: 32px; height: 32px; border-radius: 8px; background: rgba(0,0,0,0.4); padding: 6px; border: 1px solid var(--border-color); object-fit: contain; }
+        
+        .meta-container h4 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .meta-container p { font-size: 12px; color: var(--text-secondary); display: flex; gap: 8px; align-items: center; margin-top: 3px; }
+        
+        .badge-pill { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        .badge-pill.high { background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #f87171; }
+        .badge-pill.medium { background: rgba(245, 158, 11, 0.12); border-color: #f59e0b; color: #fbbf24; }
+        .badge-pill.low { background: rgba(255,255,255,0.04); border-color: var(--border-color); color: var(--text-secondary); }
+        
+        .price-readout { font-weight: 700; color: var(--accent-green); font-size: 13px; }
+        .inline-sync-btn { background: rgba(0, 149, 246, 0.08); border: 1px solid rgba(0, 149, 246, 0.15); color: #60a5fa; font-size: 11px; font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+
+        .card-segment-right { display: flex; align-items: center; }
+        .kill-row-btn { background: none; border: none; color: var(--danger); font-size: 16px; cursor: pointer; padding: 6px; opacity: 0.6; transition: opacity 0.2s; }
+        .kill-row-btn:hover { opacity: 1; }
+
+        .empty-illustration { text-align: center; color: var(--text-secondary); padding: 60px 0; font-size: 13px; border: 1px dashed var(--border-color); border-radius: 16px; background: rgba(0,0,0,0.1); }
+        .wipe-btn-container { margin-top: auto; padding-top: 12px; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+        @keyframes panelFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Media Queries for Responsive Bento Refitment */
+        @media (max-width: 1100px) {
+            .col-4 { grid-column: span 6; }
+            .col-8 { grid-column: span 12; }
+            .col-5 { grid-column: span 12; }
+            .col-7 { grid-column: span 12; }
+        }
+        @media (max-width: 768px) {
+            body { padding-top: 90px; }
+            .app-layout { grid-template-columns: 1fr; gap: 16px; padding: 0 16px; }
+            .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-12 { grid-column: span 1; }
+            .form-layout { grid-template-columns: 1fr; }
+            .field-box.wide { grid-column: span 1; }
+            .action-submit-btn { grid-column: span 1; }
+            .canvas-header-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .tab-strip { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-wrap">
+            <div class="logo-mark">RRR MALL</div>
+            <div class="font-heading" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px;">SYSTEM OPS v2.4</div>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        
+        <div class="bento-panel col-4">
+            <div class="panel-header"><span class="panel-tag">Active Assets</span></div>
+            <div class="metric-large" id="totalCount">0 Items</div>
+        </div>
+
+        <div class="bento-panel col-4">
+            <div class="panel-header"><span class="panel-tag">Gross Valuation</span></div>
+            <div class="metric-large gradient-green" id="totalBudget">₹0</div>
+        </div>
+
+        <div class="bento-panel col-4">
+            <div class="panel-header"><span class="panel-tag">System Control</span></div>
+            <div class="wipe-btn-container">
+                <button class="danger-action" onclick="wipeCoreDatabase()" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 13px; width: 100%; transition: 0.2s;">Wipe Master Database</button>
+            </div>
+        </div>
+
+        <div class="bento-panel col-5">
+            <div class="panel-header"><span class="panel-tag">Deploy New Asset Target</span></div>
+            <form id="masterForm">
+                <div class="form-layout">
+                    <div class="field-box wide">
+                        <label>Asset Label Name</label>
+                        <input type="text" id="itemName" placeholder="e.g., French Crown Cream Linen Shirt" required>
+                    </div>
+                    <div class="field-box wide">
+                        <label>Hyperlink Source URL</label>
+                        <input type="url" id="itemLink" placeholder="https://..." required>
+                    </div>
+                    <div class="field-box">
+                        <label>Canvas List target</label>
+                        <select id="itemCategory"></select>
+                    </div>
+                    <div class="field-box">
+                        <label>Asset Cost (₹)</label>
+                        <input type="text" id="itemPrice" placeholder="Leave blank to auto-track">
+                    </div>
+                    <div class="field-box wide">
+                        <label>Urgency Threshold</label>
+                        <select id="itemPriority">
+                            <option value="low">Low Priority Trace</option>
+                            <option value="medium">Medium Priority Trace</option>
+                            <option value="high">🔥 High Priority Watchlist</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="submitBtn" class="action-submit-btn">Deploy Asset To Canvas</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bento-panel col-7">
+            <div class="panel-header"><span class="panel-tag">Configuration Settings</span></div>
+            <div class="config-row">
+                <div class="config-node"><label>Node 1</label><input type="text" id="set1" oninput="modifyCategoryConfigs()"></div>
+                <div class="config-node"><label>Node 2</label><input type="text" id="set2" oninput="modifyCategoryConfigs()"></div>
+                <div class="config-node"><label>Node 3</label><input type="text" id="set3" oninput="modifyCategoryConfigs()"></div>
+            </div>
+        </div>
+
+        <div class="bento-panel col-12">
+            <div class="canvas-header-row">
+                <div class="tab-strip">
+                    <button class="bento-tab-btn active" id="btn1" onclick="shiftViewportTab('cat1')"></button>
+                    <button class="bento-tab-btn" id="btn2" onclick="shiftViewportTab('cat2')"></button>
+                    <button class="bento-tab-btn" id="btn3" onclick="shiftViewportTab('cat3')"></button>
+                </div>
+                <button class="share-wa-btn" onclick="executeWhatsAppExport()">Export Active List (WA) 💬</button>
+            </div>
+
+            <div id="cat1" class="canvas-viewport active"></div>
+            <div id="cat2" class="canvas-viewport"></div>
+            <div id="cat3" class="canvas-viewport"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
+        let currentActiveTab = 'cat1';
+
+        function initializeState() {
+            // Apply category values to settings configurations
+            document.getElementById('set1').value = categories.cat1;
+            document.getElementById('set2').value = categories.cat2;
+            document.getElementById('set3').value = categories.cat3;
+
+            // Bind selectors to item dropdown injection block
+            const selector = document.getElementById('itemCategory');
+            selector.innerHTML = '';
+            Object.keys(categories).forEach(key => {
+                let opt = document.createElement('option');
+                opt.value = key; opt.innerText = categories[key];
+                selector.appendChild(opt);
+            });
+
+            // Update navigation tab copy values
+            document.getElementById('btn1').innerText = categories.cat1;
+            document.getElementById('btn2').innerText = categories.cat2;
+            document.getElementById('btn3').innerText = categories.cat3;
+
+            processAppRenderCycles();
+        }
+
+        function shiftViewportTab(tabId) {
+            currentActiveTab = tabId;
+            document.querySelectorAll('.canvas-viewport').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.bento-tab-btn').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if(tabId === 'cat1') document.getElementById('btn1').classList.add('active');
+            if(tabId === 'cat2') document.getElementById('btn2').classList.add('active');
+            if(tabId === 'cat3') document.getElementById('btn3').classList.add('active');
+        }
+
+        function modifyCategoryConfigs() {
+            categories.cat1 = document.getElementById('set1').value || "By Function";
+            categories.cat2 = document.getElementById('set2').value || "By Event";
+            categories.cat3 = document.getElementById('set3').value || "By Action";
+            localStorage.setItem('shop_categories', JSON.stringify(categories));
+            initializeState();
+        }
+
+        function processAppRenderCycles() {
+            // Calculate active elements vs terminal purchases
+            const activeItems = shoppingItems.filter(i => !i.purchased);
+            document.getElementById('totalCount').innerText = `${activeItems.length} ${activeItems.length === 1 ? 'Asset' : 'Assets'}`;
+
+            const overallCostVal = shoppingItems.reduce((sum, i) => sum + (parseFloat(i.price) || 0), 0);
+            document.getElementById('totalBudget').innerText = `₹${overallCostVal.toLocaleString('en-IN')}`;
+
+            // Clear viewports prior to innerDOM injection loops
+            document.getElementById('cat1').innerHTML = '';
+            document.getElementById('cat2').innerHTML = '';
+            document.getElementById('cat3').innerHTML = '';
+
+            const internalPriorityWeight = { high: 1, medium: 2, low: 3 };
+            shoppingItems.sort((a, b) => a.purchased - b.purchased || internalPriorityWeight[a.priority] - internalPriorityWeight[b.priority]);
+
+            if (shoppingItems.length === 0) {
+                document.querySelectorAll('.canvas-viewport').forEach(v => {
+                    v.innerHTML = `<div class="empty-illustration">Canvas system unpopulated. Use deployment matrix form above.</div>`;
+                });
+            } else {
+                shoppingItems.forEach(item => {
+                    const targetContainer = document.getElementById(item.category);
+                    if (!targetContainer) return;
+
+                    let hostDomain = "link";
+                    let computedFaviconUrl = "https://www.google.com/s2/favicons?sz=64&domain=github.com";
+                    try {
+                        let parsed = new URL(item.link);
+                        hostDomain = parsed.hostname.replace('www.', '');
+                        computedFaviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${parsed.hostname}`;
+                    } catch(err) {}
+
+                    const card = document.createElement('div');
+                    card.className = `feed-post-card ${item.purchased ? 'completed-line' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-segment-left">
+                            <input type="checkbox" class="checkbox-node" ${item.purchased ? 'checked' : ''} onclick="toggleItemState(${item.id})">
+                            <img src="${computedFaviconUrl}" class="thumbnail-favicon" alt="Icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2331/2331966.png'">
+                            <a href="${item.link}" target="_blank" style="text-decoration: none; color: inherit; flex-grow: 1;">
+                                <div class="meta-container">
+                                    <h4>${item.name}</h4>
+                                    <p>
+                                        ${hostDomain}
+                                        <span class="badge-pill ${item.priority}">${item.priority}</span>
+                                        <span class="price-readout" id="raw-price-${item.id}">₹${(Number(item.price) || 0).toLocaleString('en-IN')}</span>
+                                        <button class="inline-sync-btn" id="sync-icon-${item.id}" onclick="executeLivePriceSync(event, ${item.id}, '${item.link}')">🔄 Sync</button>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="card-segment-right">
+                            <button class="kill-row-btn" onclick="terminateAssetNode(${item.id})">🗑️</button>
+                        </div>
+                    `;
+                    targetContainer.appendChild(card);
+                });
+            }
+            shiftViewportTab(currentActiveTab);
+        }
+
+        document.getElementById('masterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const targetUrl = document.getElementById('itemLink').value;
+            let capturedPrice = document.getElementById('itemPrice').value;
+            let numericVal = parseFloat(capturedPrice.replace(/[^0-9.]/g, '')) || 0;
+
+            if (!capturedPrice) {
+                btn.disabled = true; btn.innerText = "Querying digital firewalls...";
+                try {
+                    const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(targetUrl)}`);
+                    const data = await response.json();
+                    if(data.status === 'success' && data.data.price) {
+                        numericVal = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
+                    }
+                } catch(err) {}
+
+                if(numericVal === 0) {
+                    let bypassVal = prompt("Target platform hidden parameters. Provide numerical values manually:");
+                    if(bypassVal) numericVal = parseFloat(bypassVal.replace(/[^0-9.]/g, '')) || 0;
+                }
+            }
+
+            shoppingItems.push({
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                link: targetUrl,
+                category: document.getElementById('itemCategory').value,
+                price: numericVal,
+                priority: document.getElementById('itemPriority').value,
+                purchased: false
+            });
+
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            document.getElementById('masterForm').reset();
+            btn.disabled = false; btn.innerText = "Deploy Asset to Canvas";
+            processAppRenderCycles();
+        });
+
+        async function executeLivePriceSync(e, itemId, linkUrl) {
+            e.preventDefault(); e.stopPropagation();
+            const btn = document.getElementById(`sync-icon-${itemId}`);
+            const span = document.getElementById(`raw-price-${itemId}`);
+            
+            btn.innerText = "⏳";
+            let freshCost = 0;
+            try {
+                const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(linkUrl)}`);
+                const data = await response.json();
+                if(data.status === 'success' && data.data.price) {
+                    freshCost = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
+                }
+            } catch(err) {}
+
+            if(freshCost === 0) {
+                let adjustOverride = prompt("Target endpoint unreadable. Please pass raw pricing manually:");
+                if(adjustOverride !== null) {
+                    freshCost = parseFloat(adjustOverride.replace(/[^0-9.]/g, '')) || 0;
+                } else {
+                    btn.innerText = "🔄 Sync"; return;
+                }
+            }
+
+            shoppingItems = shoppingItems.map(item => item.id === itemId ? {...item, price: freshCost} : item);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            span.innerText = `₹${freshCost.toLocaleString('en-IN')}`;
+            btn.innerText = "✅";
+            setTimeout(() => { btn.innerText = "🔄 Sync"; }, 2000);
+        }
+
+        function toggleItemState(id) {
+            shoppingItems = shoppingItems.map(i => i.id === id ? {...i, purchased: !i.purchased} : i);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            processAppRenderCycles();
+        }
+
+        function terminateAssetNode(id) {
+            if(confirm("Confirm asset purge operation?")) {
+                shoppingItems = shoppingItems.filter(i => i.id !== id);
+                localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                processAppRenderCycles();
+            }
+        }
+
+        function executeWhatsAppExport() {
+            let contextName = categories[currentActiveTab];
+            let listContent = shoppingItems.filter(i => i.category === currentActiveTab && !i.purchased);
+            if(listContent.length === 0) return alert("Selected tracking container is unpopulated.");
+
+            let rawText = `🛒 *RRR Mall - ${contextName}*:\n\n`;
+            listContent.forEach((item, index) => {
+                rawText += `${index + 1}. *${item.name}* ${item.price ? `(₹${item.price})` : ''}\n🔗 ${item.link}\n\n`;
+            });
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(rawText)}`, '_blank');
+        }
+
+        function wipeCoreDatabase() {
+            if(confirm("Perform sweeping system purge? All storage files will clear.")) {
+                localStorage.clear(); location.reload();
+            }
+        }
+
+        initializeState();
+    </script>
+</body>
+</html>
