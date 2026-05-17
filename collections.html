@@ -40,6 +40,7 @@
         .badge.medium { border-color: #d6249f; color: #d6249f; }
         .badge.low { border-color: var(--border-color); color: var(--secondary-text); }
         .price-tag { font-weight: 700; color: #38a169; }
+        .sync-price-btn { background: none; border: none; color: var(--ig-blue); font-size: 11px; font-weight: bold; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
         
         .controls { display: flex; gap: 12px; align-items: center; }
         .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
@@ -112,7 +113,12 @@
                         <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1;">
                             <div class="link-info">
                                 <h3>${item.name}</h3>
-                                <p>${domain} <span class="badge ${item.priority}">${item.priority}</span> ${item.price ? `<span class="price-tag">₹${Number(item.price).toLocaleString('en-IN')}</span>` : ''}</p>
+                                <p>
+                                    ${domain} 
+                                    <span class="badge ${item.priority}">${item.priority}</span> 
+                                    <span class="price-tag" id="price-val-${item.id}">₹${(Number(item.price) || 0).toLocaleString('en-IN')}</span>
+                                    <button class="sync-price-btn" id="sync-btn-${item.id}" onclick="refreshItemPrice(event, ${item.id}, '${item.link}')">🔄 Update</button>
+                                </p>
                             </div>
                         </a>
                     </div>
@@ -124,6 +130,36 @@
             });
             switchTab(currentActiveTab);
         }
+        
+        async function refreshItemPrice(e, itemId, linkUrl) {
+            e.preventDefault();
+            e.stopPropagation();
+            const btn = document.getElementById(`sync-btn-${itemId}`);
+            const priceSpan = document.getElementById(`price-val-${itemId}`);
+            
+            btn.innerText = "⏳...";
+            try {
+                const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(linkUrl)}`);
+                const data = await response.json();
+                if (data.status === 'success' && data.data.price) {
+                    let extractedPrice = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
+                    if(extractedPrice > 0) {
+                        shoppingItems = shoppingItems.map(item => item.id === itemId ? {...item, price: extractedPrice} : item);
+                        localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                        priceSpan.innerText = `₹${extractedPrice.toLocaleString('en-IN')}`;
+                        btn.innerText = "✅";
+                    } else {
+                        btn.innerText = "❌";
+                    }
+                } else {
+                    btn.innerText = "❌";
+                }
+            } catch (err) {
+                btn.innerText = "❌";
+            }
+            setTimeout(() => { btn.innerText = "🔄 Update"; }, 2000);
+        }
+
         function togglePurchase(id) {
             shoppingItems = shoppingItems.map(item => item.id === id ? {...item, purchased: !item.purchased} : item);
             localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
