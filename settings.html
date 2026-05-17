@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RRR Mall - Settings</title>
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --primary-text: #262626;
+            --secondary-text: #737373;
+            --border-color: #dbdbdb;
+            --ig-blue: #0095F6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .top-nav { width: 100%; max-width: 600px; display: flex; justify-content: flex-start; margin-bottom: 25px; }
+        .nav-btn { text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); }
+        .container { width: 100%; max-width: 600px; }
+        .settings-card { background: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .settings-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--secondary-text); margin-bottom: 4px; }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; }
+        .danger-btn { background: #ed4956; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="top-nav"><a href="index.html" class="nav-btn">🏠 Home Dashboard</a></div>
+    <div class="container">
+        <div class="settings-card">
+            <h2>⚙️ Rename List Collections</h2>
+            <div class="input-group"><label>Collection 1</label><input type="text" id="set1" oninput="save()"></div>
+            <div class="input-group"><label>Collection 2</label><input type="text" id="set2" oninput="save()"></div>
+            <div class="input-group"><label>Collection 3</label><input type="text" id="set3" oninput="save()"></div>
+        </div>
+        <div class="settings-card" style="border-color: #fd5949;">
+            <h2 style="color: #ed4956;">⚠️ Danger Zone</h2>
+            <button class="danger-btn" onclick="clearAllData()">Wipe Entire Database</button>
+        </div>
+    </div>
+    <script>
+        let cats = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        document.getElementById('set1').value = cats.cat1;
+        document.getElementById('set2').value = cats.cat2;
+        document.getElementById('set3').value = cats.cat3;
+
+        function save() {
+            cats.cat1 = document.getElementById('set1').value || "By Function";
+            cats.cat2 = document.getElementById('set2').value || "By Event";
+            cats.cat3 = document.getElementById('set3').value || "By Action";
+            localStorage.setItem('shop_categories', JSON.stringify(cats));
+        }
+        function clearAllData() {
+            if(confirm("Are you sure you want to delete all shopping links and reset categories?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
