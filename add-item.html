@@ -52,7 +52,7 @@
                     <select id="itemCategory"></select>
                 </div>
                 <div class="form-group">
-                    <label>Price (₹) <span style="font-weight:normal; font-size:11px; color:var(--ig-blue);">Leave blank to auto-track price</span></label>
+                    <label>Price (₹) <span style="font-weight:normal; font-size:11px; color:var(--ig-blue);">Leave blank to try auto-tracking</span></label>
                     <input type="text" id="itemPrice" placeholder="e.g., 2256">
                 </div>
                 <div class="form-group">
@@ -85,7 +85,7 @@
             let rawPrice = document.getElementById('itemPrice').value;
             let cleanPrice = parseFloat(rawPrice.replace(/[^0-9.]/g, '')) || 0;
 
-            // Trigger Live Price Scraper Proxy if field is left empty
+            // Trigger Scraper if field is left empty
             if (!rawPrice) {
                 submitBtn.disabled = true;
                 submitBtn.innerText = "🔍 Fetching Live Price From Link...";
@@ -96,7 +96,15 @@
                         cleanPrice = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
                     }
                 } catch (err) {
-                    console.log("Auto-price extraction bypass failed, falling back to 0");
+                    console.log("Auto-price extraction failed");
+                }
+                
+                // Smart Fallback prompt if site blocks scraper
+                if (cleanPrice === 0) {
+                    let manualPrice = prompt("This store blocked automatic price fetching. Please enter the price manually (or leave 0):");
+                    if (manualPrice) {
+                        cleanPrice = parseFloat(manualPrice.replace(/[^0-9.]/g, '')) || 0;
+                    }
                 }
             }
 
