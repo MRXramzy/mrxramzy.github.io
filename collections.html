@@ -138,25 +138,31 @@
             const priceSpan = document.getElementById(`price-val-${itemId}`);
             
             btn.innerText = "⏳...";
+            let extractedPrice = 0;
             try {
                 const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(linkUrl)}`);
                 const data = await response.json();
                 if (data.status === 'success' && data.data.price) {
-                    let extractedPrice = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
-                    if(extractedPrice > 0) {
-                        shoppingItems = shoppingItems.map(item => item.id === itemId ? {...item, price: extractedPrice} : item);
-                        localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
-                        priceSpan.innerText = `₹${extractedPrice.toLocaleString('en-IN')}`;
-                        btn.innerText = "✅";
-                    } else {
-                        btn.innerText = "❌";
-                    }
-                } else {
-                    btn.innerText = "❌";
+                    extractedPrice = parseFloat(data.data.price.toString().replace(/[^0-9.]/g, '')) || 0;
                 }
-            } catch (err) {
-                btn.innerText = "❌";
+            } catch (err) {}
+
+            // Fallback prompt on individual refresh update click
+            if (extractedPrice === 0) {
+                let userOverride = prompt("Store structure blocked auto-fetching. Please adjust or enter price manually:");
+                if (userOverride !== null) {
+                    extractedPrice = parseFloat(userOverride.replace(/[^0-9.]/g, '')) || 0;
+                } else {
+                    btn.innerText = "🔄 Update";
+                    return; // abort if user hits cancel
+                }
             }
+
+            shoppingItems = shoppingItems.map(item => item.id === itemId ? {...item, price: extractedPrice} : item);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            priceSpan.innerText = `₹${extractedPrice.toLocaleString('en-IN')}`;
+            btn.innerText = "✅";
+            
             setTimeout(() => { btn.innerText = "🔄 Update"; }, 2000);
         }
 
