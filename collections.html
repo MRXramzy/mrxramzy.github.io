@@ -3,77 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RRR Mall - Collections</title>
+    <title>RRR Mall - Collections Canvas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fafafa;
-            --card-bg: #ffffff;
-            --primary-text: #262626;
-            --secondary-text: #737373;
+            --bg-color: #0F1115;
+            --card-bg: rgba(30, 35, 45, 0.65);
+            --card-hover: rgba(30, 35, 45, 0.9);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-text: #F5F7FA;
+            --secondary-text: #9CA3AF;
             --ig-blue: #0095F6;
-            --border-color: #dbdbdb;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        html, body { min-height: 100vh; background-color: var(--bg-color); color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .top-nav { width: 100%; max-width: 600px; display: flex; justify-content: space-between; margin-bottom: 25px; align-items: center; }
-        .nav-btn { text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); }
-        .share-wa { background: #25D366; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .container { width: 100%; max-width: 600px; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-        .tab-btn { background: none; border: none; padding: 12px 4px; font-weight: 600; font-size: 14px; color: var(--secondary-text); cursor: pointer; margin-right: 16px; position: relative; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        h3, .tab-btn, .nav-btn, .price-tag { font-family: 'Space Grotesk', sans-serif; }
+        
+        body { 
+            background: 
+                radial-gradient(circle at 80% 10%, rgba(124, 92, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 20% 90%, rgba(34, 197, 94, 0.1) 0%, transparent 40%),
+                linear-gradient(rgba(15, 17, 21, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 17, 21, 0.4) 1px, transparent 1px),
+                #0F1115;
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--primary-text); min-height: 100vh; padding-top: 80px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(15, 17, 21, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color); display: flex; justify-content: center; padding: 15px 20px;
+        }
+        .nav-container { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 700; background: linear-gradient(45deg, #7C5CFF, #FF5E97); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-actions { display: flex; gap: 10px; }
+        .nav-btn { text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); transition: 0.2s; }
+        .nav-btn:hover { border-color: #7C5CFF; background: rgba(124, 92, 255, 0.1); }
+        .share-wa { background: #25D366; border: none; color: white; font-weight: 700; }
+        .share-wa:hover { background: #20ba5a; }
+
+        .container { width: 100%; max-width: 800px; padding: 20px; }
+        
+        /* Modern Premium Horizontal Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 2px; }
+        .tab-btn { background: none; border: none; padding: 12px 16px; font-weight: 700; font-size: 14px; color: var(--secondary-text); cursor: pointer; position: relative; transition: color 0.2s; }
         .tab-btn.active { color: var(--primary-text); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary-text); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 3px; background: #7C5CFF; border-radius: 2px; box-shadow: 0 0 10px #7C5CFF; }
+
         .category-section { display: none; }
-        .category-section.active { display: block; }
-        
-        .link-card { background: var(--card-bg); padding: 16px; border-radius: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); transition: opacity 0.2s; }
-        .link-card.completed { opacity: 0.5; background: #f9f9f9; }
+        .category-section.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* Premium Glass Link Card Components */
+        .link-card { 
+            background: var(--card-bg); padding: 18px; border-radius: 20px; margin-bottom: 14px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border: 1px solid var(--border-color); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.2s;
+        }
+        .link-card:hover { 
+            transform: scale(1.01) translateY(-2px); 
+            background: var(--card-hover);
+            border-color: rgba(124, 92, 255, 0.35);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .link-card.completed { opacity: 0.4; background: rgba(20,24,30,0.3); }
         .link-card.completed h3 { text-decoration: line-through; color: var(--secondary-text); }
+
+        .card-left { display: flex; align-items: center; gap: 16px; flex-grow: 1; }
+        .checkbox-wrapper { display: flex; align-items: center; }
+        .checkbox-custom { width: 20px; height: 20px; border-radius: 6px; cursor: pointer; accent-color: #22C55E; }
         
-        .card-left { display: flex; align-items: center; gap: 12px; flex-grow: 1; }
-        .favicon-img { width: 24px; height: 24px; border-radius: 4px; border: 1px solid #eee; object-fit: contain; }
-        .link-info h3 { font-size: 15px; font-weight: 600; }
-        .link-info p { font-size: 12px; color: var(--secondary-text); display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+        .favicon-img { width: 32px; height: 32px; border-radius: 8px; background: rgba(0,0,0,0.3); padding: 6px; border: 1px solid var(--border-color); object-fit: contain; }
+        .link-info h3 { font-size: 16px; font-weight: 600; color: var(--primary-text); }
+        .link-info p { font-size: 12px; color: var(--secondary-text); display: flex; gap: 10px; align-items: center; margin-top: 4px; }
         
-        .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
-        .badge.high { border-color: #fd5949; color: #fd5949; }
-        .badge.medium { border-color: #d6249f; color: #d6249f; }
-        .badge.low { border-color: var(--border-color); color: var(--secondary-text); }
-        .price-tag { font-weight: 700; color: #38a169; }
-        .sync-price-btn { background: none; border: none; color: var(--ig-blue); font-size: 11px; font-weight: bold; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+        .badge { padding: 2px 8px; border-radius: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        .badge.high { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #f87171; }
+        .badge.medium { background: rgba(245, 158, 11, 0.15); border-color: #f59e0b; color: #fbbf24; }
+        .badge.low { background: rgba(255,255,255,0.05); border-color: var(--border-color); color: var(--secondary-text); }
         
-        .controls { display: flex; gap: 12px; align-items: center; }
-        .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
-        .delete-btn { background: none; border: none; color: #ed4956; font-size: 16px; cursor: pointer; }
+        .price-tag { font-weight: 700; color: #22C55E; font-size: 13px; }
+        .sync-price-btn { background: rgba(0, 149, 246, 0.1); border: 1px solid rgba(0, 149, 246, 0.2); color: #60a5fa; font-size: 11px; font-weight: 700; cursor: pointer; padding: 2px 8px; border-radius: 6px; transition: 0.2s; }
+        .sync-price-btn:hover { background: rgba(0, 149, 246, 0.2); }
+
+        .controls { display: flex; align-items: center; margin-left: 10px; }
+        .delete-btn { background: none; border: none; color: #ef4444; font-size: 18px; cursor: pointer; padding: 8px; opacity: 0.6; transition: opacity 0.2s; }
+        .delete-btn:hover { opacity: 1; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="top-nav">
-        <a href="index.html" class="nav-btn">🏠 Dashboard</a>
-        <button class="share-wa" onclick="shareViaWhatsApp()">Share List via WA 💬</button>
-        <a href="add-item.html" class="nav-btn" style="background: var(--ig-blue); color: white; border: none;">➕ Add Link</a>
-    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">RRR MALL</a>
+            <div class="nav-actions">
+                <button class="nav-btn share-wa" onclick="shareViaWhatsApp()">Share List 💬</button>
+                <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="tabs">
             <button class="tab-btn active" id="btn1" onclick="switchTab('cat1')"></button>
             <button class="tab-btn" id="btn2" onclick="switchTab('cat2')"></button>
             <button class="tab-btn" id="btn3" onclick="switchTab('cat3')"></button>
         </div>
+
         <div id="cat1" class="category-section active"></div>
         <div id="cat2" class="category-section"></div>
         <div id="cat3" class="category-section"></div>
     </div>
+
     <script>
         let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
         let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
         let currentActiveTab = 'cat1';
 
-        function init() {
+        function initCanvas() {
             document.getElementById('btn1').innerText = categories.cat1;
             document.getElementById('btn2').innerText = categories.cat2;
             document.getElementById('btn3').innerText = categories.cat3;
-            renderItems();
+            renderCanvasItems();
         }
+
+        // Bulletproof non-event click tab switching to avoid rendering freezes
         function switchTab(tabId) {
             currentActiveTab = tabId;
             document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
@@ -84,7 +143,8 @@
             if (tabId === 'cat2') document.getElementById('btn2').classList.add('active');
             if (tabId === 'cat3') document.getElementById('btn3').classList.add('active');
         }
-        function renderItems() {
+
+        function renderCanvasItems() {
             document.getElementById('cat1').innerHTML = '';
             document.getElementById('cat2').innerHTML = '';
             document.getElementById('cat3').innerHTML = '';
@@ -108,7 +168,9 @@
                 card.className = `link-card ${item.purchased ? 'completed' : ''}`;
                 card.innerHTML = `
                     <div class="card-left">
-                        <input type="checkbox" class="checkbox-custom" ${item.purchased ? 'checked' : ''} onclick="togglePurchase(${item.id})">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" class="checkbox-custom" ${item.purchased ? 'checked' : ''} onclick="togglePurchase(${item.id})">
+                        </div>
                         <img src="${faviconUrl}" class="favicon-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2331/2331966.png'">
                         <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1;">
                             <div class="link-info">
@@ -117,7 +179,7 @@
                                     ${domain} 
                                     <span class="badge ${item.priority}">${item.priority}</span> 
                                     <span class="price-tag" id="price-val-${item.id}">₹${(Number(item.price) || 0).toLocaleString('en-IN')}</span>
-                                    <button class="sync-price-btn" id="sync-btn-${item.id}" onclick="refreshItemPrice(event, ${item.id}, '${item.link}')">🔄 Update</button>
+                                    <button class="sync-price-btn" id="sync-btn-${item.id}" onclick="refreshItemPrice(event, ${item.id}, '${item.link}')">🔄 Sync Price</button>
                                 </p>
                             </div>
                         </a>
@@ -130,10 +192,9 @@
             });
             switchTab(currentActiveTab);
         }
-        
+
         async function refreshItemPrice(e, itemId, linkUrl) {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); e.stopPropagation();
             const btn = document.getElementById(`sync-btn-${itemId}`);
             const priceSpan = document.getElementById(`price-val-${itemId}`);
             
@@ -147,14 +208,12 @@
                 }
             } catch (err) {}
 
-            // Fallback prompt on individual refresh update click
             if (extractedPrice === 0) {
-                let userOverride = prompt("Store structure blocked auto-fetching. Please adjust or enter price manually:");
+                let userOverride = prompt("Store firewall blocked automatic query. Input price manually:");
                 if (userOverride !== null) {
                     extractedPrice = parseFloat(userOverride.replace(/[^0-9.]/g, '')) || 0;
                 } else {
-                    btn.innerText = "🔄 Update";
-                    return; // abort if user hits cancel
+                    btn.innerText = "🔄 Sync Price"; return;
                 }
             }
 
@@ -162,35 +221,36 @@
             localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
             priceSpan.innerText = `₹${extractedPrice.toLocaleString('en-IN')}`;
             btn.innerText = "✅";
-            
-            setTimeout(() => { btn.innerText = "🔄 Update"; }, 2000);
+            setTimeout(() => { btn.innerText = "🔄 Sync Price"; }, 2000);
         }
 
         function togglePurchase(id) {
             shoppingItems = shoppingItems.map(item => item.id === id ? {...item, purchased: !item.purchased} : item);
             localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
-            renderItems();
+            renderCanvasItems();
         }
+
         function deleteItem(id) {
-            if(confirm("Delete this item permanently?")) {
+            if(confirm("Confirm asset termination?")) {
                 shoppingItems = shoppingItems.filter(item => item.id !== id);
                 localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
-                renderItems();
+                renderCanvasItems();
             }
         }
+
         function shareViaWhatsApp() {
             let activeListName = categories[currentActiveTab];
             let listItems = shoppingItems.filter(item => item.category === currentActiveTab && !item.purchased);
-            if(listItems.length === 0) return alert("No active items in this list to share!");
+            if(listItems.length === 0) return alert("Canvas empty. No active listings found.");
             
-            let message = `🛒 *RRR Mall - ${activeListName} List*:\n\n`;
+            let message = `🛒 *RRR Mall - ${activeListName}*:\n\n`;
             listItems.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}* ${item.price ? `(₹${item.price})` : ''}\n🔗 ${item.link}\n\n`;
             });
-            
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
         }
-        init();
+
+        initCanvas();
     </script>
 </body>
 </html>
