@@ -15,8 +15,9 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { min-height: 100vh; background-color: var(--bg-color); color: var(--primary-text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .top-nav { width: 100%; max-width: 600px; display: flex; justify-content: space-between; margin-bottom: 25px; }
+        .top-nav { width: 100%; max-width: 600px; display: flex; justify-content: space-between; margin-bottom: 25px; align-items: center; }
         .nav-btn { text-decoration: none; color: var(--primary-text); font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); }
+        .share-wa { background: #25D366; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
         .container { width: 100%; max-width: 600px; }
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
         .tab-btn { background: none; border: none; padding: 12px 4px; font-weight: 600; font-size: 14px; color: var(--secondary-text); cursor: pointer; margin-right: 16px; position: relative; }
@@ -24,21 +25,31 @@
         .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary-text); }
         .category-section { display: none; }
         .category-section.active { display: block; }
-        .link-card { background: var(--card-bg); padding: 16px; border-radius: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); text-decoration: none; color: inherit; }
+        
+        .link-card { background: var(--card-bg); padding: 16px; border-radius: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); transition: opacity 0.2s; }
+        .link-card.completed { opacity: 0.5; background: #f9f9f9; }
+        .link-card.completed h3 { text-decoration: line-through; color: var(--secondary-text); }
+        
+        .card-left { display: flex; align-items: center; gap: 12px; flex-grow: 1; }
+        .favicon-img { width: 24px; height: 24px; border-radius: 4px; border: 1px solid #eee; object-fit: contain; }
         .link-info h3 { font-size: 15px; font-weight: 600; }
         .link-info p { font-size: 12px; color: var(--secondary-text); display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+        
         .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .badge.high { border-color: #fd5949; color: #fd5949; }
         .badge.medium { border-color: #d6249f; color: #d6249f; }
         .badge.low { border-color: var(--border-color); color: var(--secondary-text); }
         .price-tag { font-weight: 700; color: #38a169; }
+        
+        .controls { display: flex; gap: 12px; align-items: center; }
+        .checkbox-custom { width: 18px; height: 18px; cursor: pointer; }
         .delete-btn { background: none; border: none; color: #ed4956; font-size: 16px; cursor: pointer; }
-        .open-icon { color: var(--ig-blue); font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="top-nav">
         <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+        <button class="share-wa" onclick="shareViaWhatsApp()">Share List via WA 💬</button>
         <a href="add-item.html" class="nav-btn" style="background: var(--ig-blue); color: white; border: none;">➕ Add Link</a>
     </div>
     <div class="container">
@@ -54,6 +65,7 @@
     <script>
         let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
         let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
+        let currentActiveTab = 'cat1';
 
         function init() {
             document.getElementById('btn1').innerText = categories.cat1;
@@ -62,45 +74,79 @@
             renderItems();
         }
         function switchTab(tabId) {
+            currentActiveTab = tabId;
             document.querySelectorAll('.category-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            
+            if (tabId === 'cat1') document.getElementById('btn1').classList.add('active');
+            if (tabId === 'cat2') document.getElementById('btn2').classList.add('active');
+            if (tabId === 'cat3') document.getElementById('btn3').classList.add('active');
         }
         function renderItems() {
             document.getElementById('cat1').innerHTML = '';
             document.getElementById('cat2').innerHTML = '';
             document.getElementById('cat3').innerHTML = '';
+            
             const priorityOrder = { high: 1, medium: 2, low: 3 };
-            shoppingItems.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+            shoppingItems.sort((a, b) => a.purchased - b.purchased || priorityOrder[a.priority] - priorityOrder[b.priority]);
 
             shoppingItems.forEach(item => {
                 const targetSection = document.getElementById(item.category);
                 if (!targetSection) return;
-                let domain = "";
-                try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e) { domain = "link"; }
+                
+                let domain = "link";
+                let faviconUrl = "https://www.google.com/s2/favicons?sz=64&domain=github.com";
+                try { 
+                    let parsedUrl = new URL(item.link);
+                    domain = parsedUrl.hostname.replace('www.', ''); 
+                    faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${parsedUrl.hostname}`;
+                } catch(e) {}
 
                 const card = document.createElement('div');
-                card.className = 'link-card';
+                card.className = `link-card ${item.purchased ? 'completed' : ''}`;
                 card.innerHTML = `
-                    <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1; display:flex; justify-content:space-between; align-items:center;">
-                        <div class="link-info">
-                            <h3>${item.name}</h3>
-                            <p>${domain} <span class="badge ${item.priority}">${item.priority}</span> ${item.price ? `<span class="price-tag">₹${item.price}</span>` : ''}</p>
-                        </div>
-                        <div style="color:var(--ig-blue); font-weight:bold; margin-right:15px;">→</div>
-                    </a>
-                    <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
+                    <div class="card-left">
+                        <input type="checkbox" class="checkbox-custom" ${item.purchased ? 'checked' : ''} onclick="togglePurchase(${item.id})">
+                        <img src="${faviconUrl}" class="favicon-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2331/2331966.png'">
+                        <a href="${item.link}" target="_blank" style="text-decoration:none; color:inherit; flex-grow:1;">
+                            <div class="link-info">
+                                <h3>${item.name}</h3>
+                                <p>${domain} <span class="badge ${item.priority}">${item.priority}</span> ${item.price ? `<span class="price-tag">₹${Number(item.price).toLocaleString('en-IN')}</span>` : ''}</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="controls">
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
+                    </div>
                 `;
                 targetSection.appendChild(card);
             });
+            switchTab(currentActiveTab);
+        }
+        function togglePurchase(id) {
+            shoppingItems = shoppingItems.map(item => item.id === id ? {...item, purchased: !item.purchased} : item);
+            localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+            renderItems();
         }
         function deleteItem(id) {
-            if(confirm("Delete this item?")) {
+            if(confirm("Delete this item permanently?")) {
                 shoppingItems = shoppingItems.filter(item => item.id !== id);
                 localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
                 renderItems();
             }
+        }
+        function shareViaWhatsApp() {
+            let activeListName = categories[currentActiveTab];
+            let listItems = shoppingItems.filter(item => item.category === currentActiveTab && !item.purchased);
+            if(listItems.length === 0) return alert("No active items in this list to share!");
+            
+            let message = `🛒 *RRR Mall - ${activeListName} List*:\n\n`;
+            listItems.forEach((item, index) => {
+                message += `${index + 1}. *${item.name}* ${item.price ? `(₹${item.price})` : ''}\n🔗 ${item.link}\n\n`;
+            });
+            
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
         }
         init();
     </script>
