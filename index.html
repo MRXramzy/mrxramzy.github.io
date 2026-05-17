@@ -149,15 +149,24 @@
         .action-submit-btn:active { transform: scale(0.98); }
 
         /* Control Nodes System Parameters */
-        .config-row { display: flex; flex-direction: column; gap: 14px; }
+        .config-row { display: flex; flex-direction: column; gap: 14px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
         .config-node { display: flex; align-items: center; gap: 14px; background: rgba(10,12,16,0.25); padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border-color); }
-        .config-node label { font-size: 11px; font-weight: 700; color: var(--accent-purple); min-width: 50px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .config-node label { font-size: 11px; font-weight: 700; color: var(--accent-purple); min-width: 60px; text-transform: uppercase; letter-spacing: 0.5px; }
         .config-node input { background: transparent; border: none; outline: none; color: white; font-size: 14px; width: 100%; font-weight: 500; }
+        .delete-cat-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; opacity: 0.5; transition: opacity 0.2s; }
+        .delete-cat-btn:hover { opacity: 1; }
+
+        /* Dynamic Category Adder Form */
+        .add-cat-wrap { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border-color); }
+        .add-cat-input { flex-grow: 1; background: rgba(10, 12, 16, 0.45); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 12px; color: white; font-size: 14px; outline: none; }
+        .add-cat-input:focus { border-color: var(--accent-cyan); }
+        .add-cat-btn { background: rgba(124, 92, 255, 0.15); border: 1px solid rgba(124, 92, 255, 0.3); color: #a78bfa; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .add-cat-btn:hover { background: rgba(124, 92, 255, 0.25); border-color: var(--accent-purple); color: white; }
 
         /* Interactive Canvas Framework Elements */
         .canvas-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; gap: 16px; flex-wrap: wrap; }
-        .tab-strip { display: flex; gap: 4px; }
-        .bento-tab-btn { background: none; border: none; padding: 12px 20px; font-weight: 700; font-size: 14px; color: var(--text-secondary); cursor: pointer; position: relative; transition: color 0.2s; }
+        .tab-strip { display: flex; gap: 4px; max-width: 100%; overflow-x: auto; padding-bottom: 4px; }
+        .bento-tab-btn { background: none; border: none; padding: 12px 20px; font-weight: 700; font-size: 14px; color: var(--text-secondary); cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; }
         .bento-tab-btn.active { color: var(--text-primary); }
         .bento-tab-btn.active::after { content: ''; position: absolute; bottom: -13px; left: 0; right: 0; height: 3px; background: var(--accent-purple); border-radius: 2px; box-shadow: 0 0 14px var(--accent-purple); }
 
@@ -167,7 +176,7 @@
         .search-input:focus { border-color: var(--accent-cyan); }
         .search-icon { position: absolute; left: 14px; top: 12px; width: 14px; height: 14px; fill: var(--text-secondary); }
 
-        .share-wa-btn { background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); color: #25D366; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+        .share-wa-btn { background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); color: #25D366; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 12px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
         .share-wa-btn:hover { background: rgba(37, 211, 102, 0.2); }
 
         .canvas-viewport { display: none; margin-top: 10px; min-height: 220px; max-height: 550px; overflow-y: auto; padding-right: 8px; }
@@ -340,21 +349,19 @@
         </div>
 
         <div class="bento-panel col-7">
-            <div class="panel-header"><span class="panel-tag">Dynamic Category Configs</span></div>
-            <div class="config-row">
-                <div class="config-node"><label>Node 1</label><input type="text" id="set1" oninput="executeConfigModifications()"></div>
-                <div class="config-node"><label>Node 2</label><input type="text" id="set2" oninput="executeConfigModifications()"></div>
-                <div class="config-node"><label>Node 3</label><input type="text" id="set3" oninput="executeConfigModifications()"></div>
+            <div class="panel-header"><span class="panel-tag">Category Control Panel</span></div>
+            <div class="config-row" id="categoryConfigList">
+                </div>
+            <div class="add-cat-wrap">
+                <input type="text" class="add-cat-input" id="newCatInput" placeholder="Enter new canvas category name...">
+                <button class="add-cat-btn" onclick="addNewCategoryNode()">➕ Add Category</button>
             </div>
         </div>
 
         <div class="bento-panel col-12">
             <div class="canvas-header-row">
-                <div class="tab-strip">
-                    <button class="bento-tab-btn active" id="btn1" onclick="switchCanvasViewportTab('cat1')"></button>
-                    <button class="bento-tab-btn" id="btn2" onclick="switchCanvasViewportTab('cat2')"></button>
-                    <button class="bento-tab-btn" id="btn3" onclick="switchCanvasViewportTab('cat3')"></button>
-                </div>
+                <div class="tab-strip" id="bentoTabStrip">
+                    </div>
                 
                 <div class="search-container">
                     <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
@@ -364,17 +371,20 @@
                 <button class="share-wa-btn" onclick="triggerWhatsAppTransmission()">Export Current Feed (WA) 💬</button>
             </div>
 
-            <div id="cat1" class="canvas-viewport active"></div>
-            <div id="cat2" class="canvas-viewport"></div>
-            <div id="cat3" class="canvas-viewport"></div>
+            <div id="viewportContainer"></div>
         </div>
 
     </div>
 
     <script>
-        let categories = JSON.parse(localStorage.getItem('shop_categories')) || { cat1: "By Function", cat2: "By Event", cat3: "By Action" };
+        // Production Grade Dynamic Category Array Migration System
+        let categories = JSON.parse(localStorage.getItem('shop_categories_arr')) || [
+            { id: "cat1", name: "Adi Wedding" },
+            { id: "cat2", name: "Adis Gifts" },
+            { id: "cat3", name: "Lizi Gifts" }
+        ];
         let shoppingItems = JSON.parse(localStorage.getItem('shop_items')) || [];
-        let currentActiveTab = 'cat1';
+        let currentActiveTab = categories.length > 0 ? categories[0].id : '';
         let activeOverrideResolve = null;
 
         document.querySelectorAll('.bento-panel').forEach(panel => {
@@ -392,23 +402,63 @@
                 setTimeout(() => { splash.style.visibility = 'hidden'; }, 500);
             }, 800);
 
-            document.getElementById('set1').value = categories.cat1;
-            document.getElementById('set2').value = categories.cat2;
-            document.getElementById('set3').value = categories.cat3;
+            renderCategoryManagerPanel();
+            syncFormSelectors();
+            renderCanvasTabStrip();
+            executePlatformStateRenderCycles();
+        }
 
+        function renderCategoryManagerPanel() {
+            const container = document.getElementById('categoryConfigList');
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const row = document.createElement('div');
+                row.className = 'config-node';
+                row.innerHTML = `
+                    <label>Node ID</label>
+                    <input type="text" value="${cat.name}" oninput="modifyCategoryNodeName('${cat.id}', this.value)">
+                    <button class="delete-cat-btn" onclick="removeCategoryNode('${cat.id}')">🗑️</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function syncFormSelectors() {
             const dropdown = document.getElementById('itemCategory');
             dropdown.innerHTML = '';
-            Object.keys(categories).forEach(key => {
+            categories.forEach(cat => {
                 let opt = document.createElement('option');
-                opt.value = key; opt.innerText = categories[key];
+                opt.value = cat.id; opt.innerText = cat.name;
                 dropdown.appendChild(opt);
             });
+        }
 
-            document.getElementById('btn1').innerText = categories.cat1;
-            document.getElementById('btn2').innerText = categories.cat2;
-            document.getElementById('btn3').innerText = categories.cat3;
+        function renderCanvasTabStrip() {
+            const strip = document.getElementById('bentoTabStrip');
+            const viewportsHolder = document.getElementById('viewportContainer');
+            
+            strip.innerHTML = '';
+            viewportsHolder.innerHTML = '';
 
-            executePlatformStateRenderCycles();
+            if(categories.length > 0 && !categories.some(c => c.id === currentActiveTab)) {
+                currentActiveTab = categories[0].id;
+            }
+
+            categories.forEach(cat => {
+                const activeBtnClass = cat.id === currentActiveTab ? 'active' : '';
+                const btn = document.createElement('button');
+                btn.className = `bento-tab-btn ${activeBtnClass}`;
+                btn.id = `btn-${cat.id}`;
+                btn.innerText = cat.name;
+                btn.onclick = () => switchCanvasViewportTab(cat.id);
+                strip.appendChild(btn);
+
+                const activeViewClass = cat.id === currentActiveTab ? 'active' : '';
+                const view = document.createElement('div');
+                view.id = cat.id;
+                view.className = `canvas-viewport ${activeViewClass}`;
+                viewportsHolder.appendChild(view);
+            });
         }
 
         function switchCanvasViewportTab(tabId) {
@@ -416,19 +466,52 @@
             document.querySelectorAll('.canvas-viewport').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.bento-tab-btn').forEach(t => t.classList.remove('active'));
             
-            document.getElementById(tabId).classList.add('active');
-            if(tabId === 'cat1') document.getElementById('btn1').classList.add('active');
-            if(tabId === 'cat2') document.getElementById('btn2').classList.add('active');
-            if(tabId === 'cat3') document.getElementById('btn3').classList.add('active');
+            const targetView = document.getElementById(tabId);
+            const targetTab = document.getElementById(`btn-${tabId}`);
+            if(targetView) targetView.classList.add('active');
+            if(targetTab) targetTab.classList.add('active');
+            
             executeCanvasSearchFilter();
         }
 
-        function executeConfigModifications() {
-            categories.cat1 = document.getElementById('set1').value || "By Function";
-            categories.cat2 = document.getElementById('set2').value || "By Event";
-            categories.cat3 = document.getElementById('set3').value || "By Action";
-            localStorage.setItem('shop_categories', JSON.stringify(categories));
+        function addNewCategoryNode() {
+            const input = document.getElementById('newCatInput');
+            const rawName = input.value.trim();
+            if(!rawName) return;
+
+            const generatedId = 'cat_' + Date.now();
+            categories.push({ id: generatedId, name: rawName });
+            localStorage.setItem('shop_categories_arr', JSON.stringify(categories));
+            
+            input.value = '';
+            currentActiveTab = generatedId;
+            
             systemStateBoot();
+        }
+
+        function modifyCategoryNodeName(id, updatedValue) {
+            categories = categories.map(cat => cat.id === id ? { ...cat, name: updatedValue || "Unnamed Container" } : cat);
+            localStorage.setItem('shop_categories_arr', JSON.stringify(categories));
+            
+            // Fast live text synchronization to avoid full reload cycles
+            const tabBtn = document.getElementById(`btn-${id}`);
+            if(tabBtn) tabBtn.innerText = updatedValue;
+            syncFormSelectors();
+        }
+
+        function removeCategoryNode(id) {
+            if(confirm("Purge this entire list category? Associated link data will be reallocated or orphaned.")) {
+                categories = categories.filter(cat => cat.id !== id);
+                shoppingItems = shoppingItems.filter(item => item.category !== id);
+                
+                localStorage.setItem('shop_categories_arr', JSON.stringify(categories));
+                localStorage.setItem('shop_items', JSON.stringify(shoppingItems));
+                
+                if(currentActiveTab === id && categories.length > 0) {
+                    currentActiveTab = categories[0].id;
+                }
+                systemStateBoot();
+            }
         }
 
         function openOverrideModalPopup() {
@@ -456,6 +539,7 @@
         function executeCanvasSearchFilter() {
             let filterTerm = document.getElementById('canvasSearch').value.toLowerCase().trim();
             let container = document.getElementById(currentActiveTab);
+            if(!container) return;
             let cards = container.getElementsByClassName('feed-post-card');
 
             Array.from(cards).forEach(card => {
@@ -477,16 +561,13 @@
             const overallCostPipeline = shoppingItems.reduce((sum, i) => sum + (parseFloat(i.price) || 0), 0);
             document.getElementById('totalBudget').innerText = `₹${overallCostPipeline.toLocaleString('en-IN')}`;
 
-            document.getElementById('cat1').innerHTML = '';
-            document.getElementById('cat2').innerHTML = '';
-            document.getElementById('cat3').innerHTML = '';
-
             const tierSortingMap = { high: 1, medium: 2, low: 3 };
             shoppingItems.sort((a, b) => a.purchased - b.purchased || tierSortingMap[a.priority] - tierSortingMap[b.priority]);
 
             if (shoppingItems.length === 0) {
-                document.querySelectorAll('.canvas-viewport').forEach(v => {
-                    v.innerHTML = `<div class="empty-illustration">Rēvra data registry core unpopulated. Generate assets above.</div>`;
+                categories.forEach(cat => {
+                    const targetViewport = document.getElementById(cat.id);
+                    if(targetViewport) targetViewport.innerHTML = `<div class="empty-illustration">Rēvra data registry core unpopulated. Generate assets above.</div>`;
                 });
             } else {
                 shoppingItems.forEach(item => {
@@ -525,8 +606,16 @@
                     `;
                     canvasSectionDestination.appendChild(componentCardElement);
                 });
+                
+                // Set fallback empty state illustration for dynamic viewports that are cleared
+                categories.forEach(cat => {
+                    const targetViewport = document.getElementById(cat.id);
+                    if(targetViewport && targetViewport.children.length === 0) {
+                        targetViewport.innerHTML = `<div class="empty-illustration">This specific data container is empty. Add links above.</div>`;
+                    }
+                });
             }
-            switchCanvasViewportTab(currentActiveTab);
+            if(currentActiveTab) switchCanvasViewportTab(currentActiveTab);
         }
 
         document.getElementById('masterForm').addEventListener('submit', async function(e) {
@@ -535,6 +624,8 @@
             const linkAddress = document.getElementById('itemLink').value;
             let manualPriceInput = document.getElementById('itemPrice').value;
             let formattedNumericOutput = parseFloat(manualPriceInput.replace(/[^0-9.]/g, '')) || 0;
+
+            if(!categories.length) return alert("Operation rejected. Please instantiate at least one target canvas collection node first.");
 
             if (!manualPriceInput) {
                 actionBtn.disabled = true; actionBtn.innerText = "Querying live digital firewalls...";
@@ -611,7 +702,8 @@
         }
 
         function triggerWhatsAppTransmission() {
-            let selectedNodeLabel = categories[currentActiveTab];
+            const currentCatObj = categories.find(c => c.id === currentActiveTab);
+            let selectedNodeLabel = currentCatObj ? currentCatObj.name : "Collection";
             let rawBufferContents = shoppingItems.filter(item => item.category === currentActiveTab && !item.purchased);
             if(rawBufferContents.length === 0) return alert("Target container is unpopulated.");
 
